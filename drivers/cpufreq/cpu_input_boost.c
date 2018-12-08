@@ -143,6 +143,11 @@ void cpu_input_boost_kick_max(unsigned int duration_ms)
 	queue_work(b->wq, &b->max_boost);
 }
 
+void cpu_input_boost_kick_wake(void)
+{
+	cpu_input_boost_kick_max(CONFIG_WAKE_BOOST_DURATION_MS);
+}
+
 static void input_boost_worker(struct work_struct *work)
 {
 	struct boost_drv *b = container_of(work, typeof(*b), input_boost);
