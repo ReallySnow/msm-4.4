@@ -159,11 +159,6 @@ void cpu_input_boost_kick_max(unsigned int duration_ms)
 	queue_work(b->wq, &b->max_boost);
 }
 
-void cpu_input_boost_kick_wake(void)
-{
-	cpu_input_boost_kick_max(CONFIG_WAKE_BOOST_DURATION_MS);
-}
-
 static void __cpu_input_boost_kick_general(struct boost_drv *b,
 	unsigned int duration_ms)
 {
@@ -309,8 +304,6 @@ static int fb_notifier_cb(struct notifier_block *nb,
 	/* Boost when the screen turns on and unboost when it turns off */
 	if (*blank == FB_BLANK_UNBLANK) {
 		set_boost_bit(b, SCREEN_AWAKE);
-		atomic_set(&b->max_boost_dur, CONFIG_INPUT_BOOST_DURATION_MS);
-		queue_work(b->wq, &b->max_boost);
 	} else {
 		clear_boost_bit(b, SCREEN_AWAKE);
 		unboost_all_cpus(b);
