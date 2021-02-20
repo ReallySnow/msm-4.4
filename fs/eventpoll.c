@@ -1250,7 +1250,7 @@ static int ep_create_wakeup_source(struct epitem *epi)
 
 	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
 	snprintf(buf, sizeof(buf), "epoll_%.*s_file:%s",
-		 (int)sizeof(task_comm_buf), task_comm_buf, name);
+		 (int)sizeof(task_comm_buf), task_comm_buf, n.name);
 	ws = wakeup_source_register(buf);
 	release_dentry_name_snapshot(&n);
 
