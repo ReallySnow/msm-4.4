@@ -124,25 +124,6 @@ void cpu_input_boost_kick(void)
 	queue_work(b->wq, &b->input_boost);
 }
 
-static void __cpu_input_boost_kick_max(struct boost_drv *b,
-				       unsigned int duration_ms)
-{
-	unsigned long curr_expires, new_expires;
-
-	do {
-		curr_expires = atomic64_read(&b->max_boost_expires);
-		new_expires = jiffies + msecs_to_jiffies(duration_ms);
-
-		/* Skip this boost if there's a longer boost in effect */
-		if (time_after(curr_expires, new_expires))
-			return;
-	} while (atomic64_cmpxchg(&b->max_boost_expires, curr_expires,
-		new_expires) != curr_expires);
-
-	atomic_set(&b->max_boost_dur, duration_ms);
-	queue_work(b->wq, &b->max_boost);
-}
-
 void cpu_input_boost_kick_max(unsigned int duration_ms)
 {
 	struct boost_drv *b = boost_drv_g;
@@ -152,10 +133,6 @@ void cpu_input_boost_kick_max(unsigned int duration_ms)
 		return;
 
 	state = get_boost_state(b);
-
-	/* Don't mess with wake boosts */
-	if (state & WAKE_BOOST)
-		return;
 
 	atomic_set(&b->max_boost_dur, duration_ms);
 	queue_work(b->wq, &b->max_boost);
