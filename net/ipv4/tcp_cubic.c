@@ -238,14 +238,14 @@ static inline void bictcp_update(struct bictcp *ca, u32 cwnd, u32 acked)
 	 * On all cwnd reduction events, ca->epoch_start is set to 0,
 	 * which will force a recalculation of ca->cnt.
 	 */
-	if (ca->epoch_start && tcp_time_stamp == ca->last_time)
+	if (ca->epoch_start && tcp_jiffies32 == ca->last_time)
 		goto tcp_friendliness;
 
 	ca->last_cwnd = cwnd;
-	ca->last_time = tcp_time_stamp;
+	ca->last_time = tcp_jiffies32;
 
 	if (ca->epoch_start == 0) {
-		ca->epoch_start = tcp_time_stamp;	/* record beginning */
+		ca->epoch_start = tcp_jiffies32;	/* record beginning */
 		ca->ack_cnt = acked;			/* start counting */
 		ca->tcp_cwnd = cwnd;			/* syn with cubic */
 
